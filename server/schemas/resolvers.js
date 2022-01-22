@@ -1,27 +1,66 @@
-const { Tech, Matchup } = require('../models');
+const { User } = require("../models");
+const { signToken, authMiddleware } = require("../utils/auth");
+const { AuthenticationError } = require("apollo-server-express");
 
 const resolvers = {
   Query: {
-    tech: async () => {
-      return Tech.find({});
+    users: async (parent, args) => {
+      return User.find({});
     },
-    matchups: async (parent, { _id }) => {
-      const params = _id ? { _id } : {};
-      return Matchup.find(params);
+    oneUser: async (parent, { _id }) => {
+      return User.findOne({
+        _id,
+      });
     },
   },
   Mutation: {
-    createMatchup: async (parent, args) => {
-      const matchup = await Matchup.create(args);
-      return matchup;
+    addUser: async (parent, { username, email, password }) => {
+      const user = await User.create({ username, email, password });
+      const token = signToken(user);
+
+      return { token, user };
     },
-    createVote: async (parent, { _id, techNum }) => {
-      const vote = await Matchup.findOneAndUpdate(
-        { _id },
-        { $inc: { [`tech${techNum}_votes`]: 1 } },
-        { new: true }
+    login: async (parent, { email, password }) => {
+      const user = await User.findOne({ email });
+
+      if (!user) {
+        throw new AuthenticationError("Incorrect details given");
+      }
+
+      const correctPw = await user.isCorrectPassword(password);
+
+      if (!correctPw) {
+        throw new AuthenticationError("Incorrect given details");
+      }
+      const token = signToken(user);
+      return { token, user };
+    },
+    addBook: async (
+      parent,
+      { userId, authors, description, bookId, image, link, title }
+    ) => {
+      console.log({ userId, authors, description, bookId, image, link, title });
+
+      return User.findOneAndUpdate(
+        { _id: userId },
+        {
+          $addToSet: {
+            savedBooks: { authors, description, bookId, image, link, title },
+          },
+        },
+        {
+          new: true,
+        }
       );
-      return vote;
+    },
+    deleteBook: async (parent, { userId, bookId }) => {
+      return User.findOneAndUpdate(
+        { _id: userId },
+        { $pull: { savedBooks: { _id: bookId } } },
+        {
+          new: true,
+        }
+      );
     },
   },
 };
