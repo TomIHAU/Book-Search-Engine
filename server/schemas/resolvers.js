@@ -39,8 +39,6 @@ const resolvers = {
       parent,
       { userId, authors, description, bookId, image, link, title }
     ) => {
-      console.log({ userId, authors, description, bookId, image, link, title });
-
       return User.findOneAndUpdate(
         { _id: userId },
         {
@@ -56,7 +54,7 @@ const resolvers = {
     deleteBook: async (parent, { userId, bookId }) => {
       return User.findOneAndUpdate(
         { _id: userId },
-        { $pull: { savedBooks: { _id: bookId } } },
+        { $pull: { savedBooks: { bookId } } },
         {
           new: true,
         }

@@ -22,7 +22,6 @@ export const QUERY_ONE_USER = gql`
   query oneUser($userId: ID!) {
     oneUser(_id: $userId) {
       username
-      password
       savedBooks {
         authors
         description
