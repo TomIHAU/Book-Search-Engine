@@ -7,11 +7,14 @@ const { typeDefs, resolvers } = require("./schemas");
 
 const app = express();
 const PORT = process.env.PORT || 3001;
+const uri = process.env.MONGODB_URI;
 
 const server = new ApolloServer({
   typeDefs,
   resolvers,
 });
+
+const uri = process.env.MONGODB_URI;
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
