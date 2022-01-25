@@ -1,5 +1,7 @@
 # Book-Search-Engine
 
+[![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT) 
+
 # link to deployed app.
 
 https://searching-book-saving-books.herokuapp.com/
