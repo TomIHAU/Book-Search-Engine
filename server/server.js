@@ -14,17 +14,15 @@ const server = new ApolloServer({
   resolvers,
 });
 
-const uri = process.env.MONGODB_URI;
-
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 server.applyMiddleware({ app });
 console.log(process.env.NODE_ENV);
 // if we're in production, serve client/build as static assets
-if (process.env.NODE_ENV === "production") {
-  app.use(express.static(path.join(__dirname, "../client/build")));
-}
+// if (process.env.NODE_ENV === "production") {
+app.use(express.static(path.join(__dirname, "../client/build")));
+// }
 
 // app.use(routes);
 
